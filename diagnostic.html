@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Diagnostic Test — CCA·F Guide</title>
+<link rel="stylesheet" href="css/styles.css"/>
+</head>
+<body>
+
+<!-- ── Intro ── -->
+<div id="intro-screen" class="splash">
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-brand"><div class="nav-logo">⬡</div> Claude Certified Architect Foundations Guide</a>
+      <div class="nav-links">
+        <a href="learn.html">Curriculum</a>
+        <a href="mock-exam.html">Mock Exam</a>
+        <a href="drill.html">Drill Mode</a>
+        <a href="diagnostic.html" class="active">Diagnostic</a>
+      </div>
+    </div>
+  </nav>
+  <div class="splash-body">
+    <div class="splash-card">
+      <div class="splash-icon">📊</div>
+      <h1 class="splash-title text-center">Diagnostic Test</h1>
+      <p class="splash-sub text-center">25 questions — 5 from each domain — to identify your knowledge gaps and build a focused study plan in ~15 minutes.</p>
+
+      <div class="info-grid" style="margin-bottom:28px">
+        <div class="info-tile">
+          <div class="info-tile-icon">⚡</div>
+          <div class="info-tile-title">25 Questions</div>
+          <div class="info-tile-desc">5 per domain · No time pressure · Take your time</div>
+        </div>
+        <div class="info-tile">
+          <div class="info-tile-icon">🗺️</div>
+          <div class="info-tile-title">Gap Analysis</div>
+          <div class="info-tile-desc">Pinpoints exactly which domains need the most work</div>
+        </div>
+        <div class="info-tile">
+          <div class="info-tile-icon">📚</div>
+          <div class="info-tile-title">Study Plan</div>
+          <div class="info-tile-desc">Personalized priority order for your study sessions</div>
+        </div>
+        <div class="info-tile">
+          <div class="info-tile-icon">💡</div>
+          <div class="info-tile-title">Explanations</div>
+          <div class="info-tile-desc">Learn from every answer — right or wrong</div>
+        </div>
+      </div>
+
+      <button onclick="startDiagnostic()" class="btn btn-primary btn-xl w-full" style="justify-content:center">
+        Start Diagnostic →
+      </button>
+      <a href="index.html" class="btn btn-secondary w-full mt-8" style="justify-content:center">← Back to Home</a>
+    </div>
+  </div>
+</div>
+
+<!-- ── Quiz Shell ── -->
+<div id="quiz-shell" class="quiz-shell hidden">
+  <div class="quiz-header">
+    <div class="quiz-header-left">
+      <button onclick="exitQuiz()" class="btn btn-secondary btn-sm">← Exit</button>
+      <div class="quiz-counter">
+        Question <strong id="q-num">1</strong> of <strong>25</strong>
+      </div>
+      <span id="domain-chip" class="domain-pill"></span>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <span style="font-size:0.78rem;color:var(--text3)">No time limit</span>
+      <div style="width:140px">
+        <div class="progress-wrap">
+          <div class="progress-bar" id="q-progress" style="width:0%"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="quiz-body">
+    <div class="quiz-q-wrap">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+        <span id="q-difficulty" class="chip"></span>
+        <span class="quiz-score-live" id="score-live">0/0 correct</span>
+      </div>
+      <div class="quiz-question" id="question-text"></div>
+      <div class="quiz-options" id="options-list"></div>
+      <div class="quiz-explanation" id="explanation"></div>
+      <div class="quiz-actions">
+        <div></div>
+        <button id="next-btn" onclick="nextQuestion()" class="btn btn-primary hidden">Next →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Results ── -->
+<div id="results-screen" class="hidden">
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-brand"><div class="nav-logo">⬡</div> CCA·F Guide</a>
+      <div class="nav-links">
+        <a href="learn.html">Curriculum</a>
+        <a href="mock-exam.html">Mock Exam</a>
+        <a href="drill.html">Drill Mode</a>
+        <a href="diagnostic.html" class="active">Diagnostic</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="results-wrap">
+    <!-- Score -->
+    <div class="results-score">
+      <div class="results-circle" id="score-circle">
+        <div class="results-pct" id="score-pct">0%</div>
+        <div class="results-pct-label">Overall</div>
+      </div>
+      <div id="score-summary" style="color:var(--text2);font-size:0.92rem;margin-top:8px"></div>
+    </div>
+
+    <!-- Domain breakdown -->
+    <div class="card mb-24">
+      <div class="card-title" style="margin-bottom:6px">📊 Domain Scores</div>
+      <div class="card-desc mb-16">Sorted from weakest to strongest — tackle the top of this list first.</div>
+      <div id="domain-breakdown"></div>
+    </div>
+
+    <!-- Study Plan -->
+    <div class="card mb-24">
+      <div class="card-title" style="margin-bottom:6px">📚 Personalized Study Plan</div>
+      <div class="card-desc mb-16">Recommended focus areas based on your diagnostic results:</div>
+      <div id="study-plan"></div>
+    </div>
+
+    <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center">
+      <button onclick="location.reload()" class="btn btn-secondary">🔄 Retake Diagnostic</button>
+      <a href="learn.html" class="btn btn-outline btn-lg">📖 Study Curriculum</a>
+      <a href="mock-exam.html" class="btn btn-primary btn-lg">🎯 Full Mock Exam</a>
+    </div>
+  </div>
+</div>
+
+<script src="js/questions.js"></script>
+<script>
+let test = [], current = 0, score = 0, answered = false;
+let domainCorrect = {}, domainTotal = {};
+
+function startDiagnostic() {
+  test = buildDiagnostic();
+  Object.keys(DOMAINS).forEach(d => { domainCorrect[d] = 0; domainTotal[d] = 0; });
+  document.getElementById('intro-screen').classList.add('hidden');
+  document.getElementById('quiz-shell').classList.remove('hidden');
+  showQuestion();
+}
+
+function showQuestion() {
+  answered = false;
+  const q = test[current];
+  const d = DOMAINS[q.domain];
+
+  document.getElementById('q-num').textContent = current + 1;
+  document.getElementById('q-progress').style.width = `${(current / test.length) * 100}%`;
+
+  const chip = document.getElementById('domain-chip');
+  chip.textContent = `${d.icon} ${d.name}`;
+  chip.style.cssText = `color:${d.color};background:${d.color}18;border:1px solid ${d.color}44;padding:4px 12px;border-radius:100px;font-size:0.75rem;font-weight:700`;
+
+  const diffEl = document.getElementById('q-difficulty');
+  const diffColors = { easy:'var(--green)', medium:'var(--yellow)', hard:'var(--red)' };
+  const diff = q.difficulty || 'medium';
+  diffEl.textContent = diff.charAt(0).toUpperCase() + diff.slice(1);
+  diffEl.style.cssText = `color:${diffColors[diff]};background:${diffColors[diff]}18;border-color:${diffColors[diff]}44;font-size:0.75rem;font-weight:700`;
+
+  document.getElementById('question-text').textContent = q.question;
+  document.getElementById('explanation').className = 'quiz-explanation';
+  document.getElementById('next-btn').classList.add('hidden');
+  document.getElementById('next-btn').onclick = nextQuestion;
+  document.getElementById('score-live').textContent = `${score}/${current} correct`;
+
+  const opts = document.getElementById('options-list');
+  opts.innerHTML = '';
+  ['A','B','C','D'].forEach((ltr, i) => {
+    opts.innerHTML += `
+      <button class="quiz-option" onclick="selectOption(${i})" id="opt-${i}">
+        <span class="quiz-option-letter">${ltr}</span>
+        <span class="quiz-option-text">${q.options[i]}</span>
+      </button>`;
+  });
+}
+
+function selectOption(idx) {
+  if (answered) return;
+  answered = true;
+  const q = test[current];
+  domainTotal[q.domain]++;
+
+  document.querySelectorAll('.quiz-option').forEach(el => el.classList.add('disabled'));
+  document.getElementById(`opt-${idx}`).classList.add(idx === q.correct ? 'correct' : 'incorrect');
+  if (idx !== q.correct) document.getElementById(`opt-${q.correct}`).classList.add('correct');
+
+  if (idx === q.correct) { score++; domainCorrect[q.domain]++; }
+
+  const exp = document.getElementById('explanation');
+  exp.innerHTML = `<strong>${idx === q.correct ? '✅ Correct!' : '❌ Incorrect.'}</strong> ${q.explanation}`;
+  exp.classList.add('visible');
+  document.getElementById('score-live').textContent = `${score}/${current + 1} correct`;
+
+  const nb = document.getElementById('next-btn');
+  nb.classList.remove('hidden');
+  if (current >= test.length - 1) {
+    nb.textContent = 'See My Results →';
+    nb.onclick = showResults;
+  }
+}
+
+function nextQuestion() { current++; showQuestion(); }
+
+function exitQuiz() {
+  document.getElementById('quiz-shell').classList.add('hidden');
+  document.getElementById('intro-screen').classList.remove('hidden');
+}
+
+function showResults() {
+  document.getElementById('quiz-shell').classList.add('hidden');
+  document.getElementById('results-screen').classList.remove('hidden');
+
+  const pct = Math.round(score / test.length * 100);
+  document.getElementById('score-pct').textContent = pct + '%';
+  const circle = document.getElementById('score-circle');
+  const circleColor = pct >= 70 ? 'var(--green)' : pct >= 50 ? 'var(--yellow)' : 'var(--red)';
+  circle.style.borderColor = circleColor;
+  circle.style.boxShadow = `0 0 40px ${pct >= 70 ? 'rgba(34,197,94,0.2)' : 'rgba(248,113,113,0.2)'}`;
+  document.getElementById('score-summary').textContent =
+    `${score} correct out of ${test.length} — ${pct >= 70 ? '🎉 Solid foundation!' : pct >= 50 ? '📈 Some gaps to fill.' : '📚 Significant study needed.'}`;
+
+  // Build sorted domains
+  const domainScores = {};
+  const sorted = Object.values(DOMAINS).map(d => {
+    const c = domainCorrect[d.id] || 0, t = domainTotal[d.id] || 5;
+    const p = Math.round(c / t * 100);
+    domainScores[d.id] = p;
+    return { ...d, correct: c, total: t, pct: p };
+  }).sort((a, b) => a.pct - b.pct);
+
+  // Domain breakdown
+  const db = document.getElementById('domain-breakdown');
+  db.innerHTML = '';
+  sorted.forEach(d => {
+    const bar = d.pct >= 80 ? 'var(--green)' : d.pct >= 60 ? 'var(--blue)' : d.pct >= 40 ? 'var(--yellow)' : 'var(--red)';
+    const badge = d.pct >= 80 ? ['Strong','var(--green)'] : d.pct >= 60 ? ['Good','var(--blue)'] : d.pct >= 40 ? ['Needs Work','var(--yellow)'] : ['Priority','var(--red)'];
+    db.innerHTML += `
+      <div style="margin-bottom:16px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px">
+          <span style="font-size:0.9rem;font-weight:600;color:var(--text)">${d.icon} ${d.name}</span>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:0.73rem;font-weight:700;color:${badge[1]};background:${badge[1]}18;border:1px solid ${badge[1]}44;padding:2px 10px;border-radius:100px">${badge[0]}</span>
+            <span style="font-size:0.88rem;font-weight:700;color:${bar}">${d.correct}/${d.total}</span>
+          </div>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-bar" style="width:${d.pct}%;background:${bar}"></div>
+        </div>
+      </div>`;
+  });
+
+  // Study plan
+  const sp = document.getElementById('study-plan');
+  sp.innerHTML = '';
+  const priorities = ['🔴 Fix First','🟠 High Priority','🟡 Medium','🟢 Maintain','⭐ Strong'];
+  sorted.forEach((d, i) => {
+    const actions = d.pct >= 80
+      ? 'Looking great — light review to stay sharp'
+      : d.pct >= 60
+      ? `Study key concepts, then drill 10 min/day on this domain`
+      : `Deep study needed — read the curriculum then drill daily until consistent`;
+    sp.innerHTML += `
+      <div style="display:flex;gap:14px;padding:13px 0;border-bottom:1px solid var(--border)">
+        <div style="font-size:0.78rem;font-weight:700;color:var(--text2);white-space:nowrap;padding-top:2px;width:120px;flex-shrink:0">${priorities[Math.min(i,4)]}</div>
+        <div>
+          <div style="font-weight:600;font-size:0.9rem;margin-bottom:3px;color:var(--text)">${d.icon} ${d.name} <span style="color:var(--text3);font-weight:400;font-size:0.8rem">(${d.weight}% of exam)</span></div>
+          <div style="color:var(--text2);font-size:0.83rem">${actions}</div>
+        </div>
+      </div>`;
+  });
+
+  const weakest = sorted.filter(d => d.pct < 70).map(d => d.name);
+  if (weakest.length) {
+    sp.innerHTML += `
+      <div style="margin-top:14px;padding:14px 16px;background:var(--blue-bg);border-left:3px solid var(--blue);border-radius:var(--radius-sm);font-size:0.86rem;color:var(--text2);line-height:1.65">
+        💡 <strong style="color:var(--text)">Recommended next step:</strong> Open the Curriculum and study <strong style="color:var(--text)">${weakest.slice(0,2).join(' and ')}</strong> first, then do 10–15 min of Drill Mode on those domains each day before attempting the full Mock Exam.
+      </div>`;
+  }
+
+  saveScore('diagnostic', score, test.length, domainScores);
+}
+</script>
+</body>
+</html>

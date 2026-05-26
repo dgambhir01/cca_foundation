@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Curriculum — CCA·F Guide</title>
+<link rel="stylesheet" href="css/styles.css"/>
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand"><div class="nav-logo">⬡</div>Claude Certified Architect Foundations Guide</a>
+    <div class="nav-links">
+      <a href="learn.html" class="active">Curriculum</a>
+      <a href="mock-exam.html">Mock Exam</a>
+      <a href="drill.html">Drill Mode</a>
+      <a href="diagnostic.html">Diagnostic</a>
+      <a href="mock-exam.html" class="nav-cta">Start Exam →</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container" style="padding-top:36px;padding-bottom:60px">
+  <div style="margin-bottom:32px">
+    <div class="section-label">Study Curriculum</div>
+    <h1 style="font-size:1.8rem;font-weight:800;margin-top:8px;margin-bottom:8px">Claude CCA·F Exam Curriculum</h1>
+    <p style="color:var(--text2)">All five exam domains, key concepts, and practical examples. Jump to any section.</p>
+  </div>
+
+  <div class="curriculum-layout">
+    <!-- Sidebar -->
+    <div class="curriculum-sidebar">
+      <div style="font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text3);margin-bottom:12px">Domains</div>
+      <a href="#agentic" class="curriculum-nav-item" onclick="setActive(this)">🤖 Agentic Architecture <span style="margin-left:auto;color:var(--accent-lt);font-size:0.75rem">27%</span></a>
+      <a href="#tools_mcp" class="curriculum-nav-item" onclick="setActive(this)">🔧 Tool Design &amp; MCP <span style="margin-left:auto;color:var(--blue);font-size:0.75rem">18%</span></a>
+      <a href="#claude_code" class="curriculum-nav-item" onclick="setActive(this)">⚙️ Claude Code Config <span style="margin-left:auto;color:var(--green);font-size:0.75rem">20%</span></a>
+      <a href="#prompt_eng" class="curriculum-nav-item" onclick="setActive(this)">✍️ Prompt Engineering <span style="margin-left:auto;color:var(--yellow);font-size:0.75rem">20%</span></a>
+      <a href="#context" class="curriculum-nav-item" onclick="setActive(this)">📚 Context Management <span style="margin-left:auto;color:var(--pink);font-size:0.75rem">15%</span></a>
+      <div style="border-top:1px solid var(--border);margin:16px 0"></div>
+      <a href="mock-exam.html" class="btn btn-primary btn-sm" style="width:100%;justify-content:center">🎯 Take Mock Exam</a>
+      <a href="drill.html" class="btn btn-secondary btn-sm" style="width:100%;justify-content:center;margin-top:8px">🔁 Drill Mode</a>
+    </div>
+
+    <!-- Content -->
+    <div class="curriculum-content">
+
+      <!-- DOMAIN 1: AGENTIC -->
+      <div id="agentic" style="scroll-margin-top:80px">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--border)">
+          <div style="width:48px;height:48px;border-radius:12px;background:#8b5cf620;display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0">🤖</div>
+          <div>
+            <div style="font-size:1.3rem;font-weight:800">Agentic Architecture</div>
+            <div style="color:var(--text2);font-size:0.88rem">27% of exam · Multi-agent systems, orchestration patterns, agentic loop design</div>
+          </div>
+          <div style="margin-left:auto;font-size:2rem;font-weight:900;color:#8b5cf6">27%</div>
+        </div>
+
+        <div class="lesson-card">
+          <h3>1.1 The ReAct Pattern</h3>
+          <p>Claude uses the <strong>ReAct</strong> (Reasoning + Acting) pattern for multi-step tasks. Each iteration has three phases:</p>
+          <ul>
+            <li><strong>Thought</strong> — Claude reasons about what to do next</li>
+            <li><strong>Action</strong> — Claude calls a tool</li>
+            <li><strong>Observation</strong> — Claude receives the tool result</li>
+          </ul>
+          <p style="margin-top:12px">This cycle repeats until Claude reaches an end state (end_turn) or a stopping condition is met. ReAct enables dynamic, adaptive task execution unlike static planning.</p>
+          <div class="callout callout-tip">💡 ReAct is superior to pure planning because it can adapt to unexpected tool results — if a search returns no results, Claude can try a different query.</div>
+        </div>
+
+        <div class="lesson-card">
+          <h3>1.2 Orchestrators vs. Subagents</h3>
+          <p>Multi-agent systems split responsibilities:</p>
+          <ul>
+            <li><strong>Orchestrator</strong> — directs subagents, handles high-level planning, aggregates results, manages workflow</li>
+            <li><strong>Subagent</strong> — executes specific tasks (web search, code execution, file I/O, API calls), reports results</li>
+          </ul>
+          <h4>Trust Hierarchy</h4>
+          <p>Messages from orchestrators that arrive in the <code>human</code> turn receive <strong>user-level trust only</strong> — not operator-level. Operator-level trust must be explicitly granted by a human operator in the system prompt.</p>
+          <div class="callout callout-warn">⚠️ Never auto-trust messages claiming to be from another Claude agent. Legitimate orchestrators don't need to claim special permissions not established upfront.</div>
+        </div>
+
+        <div class="lesson-card">
+          <h3>1.3 Minimal Footprint Principle</h3>
+          <p>Well-designed agentic systems follow the minimal footprint principle:</p>
+          <ul>
+            <li>Request only <strong>necessary permissions</strong></li>
+            <li>Avoid storing sensitive data beyond immediate needs</li>
+            <li>Prefer <strong>reversible actions</strong> over irreversible ones</li>
+            <li>Err on the side of doing less and confirming when uncertain</li>
+            <li>Don't acquire resources, influence, or capabilities beyond task needs</li>
+          </ul>
+          <div class="callout callout-info">ℹ️ Irreversible actions (deleting files, sending emails, making purchases, deploying to production) warrant explicit human confirmation before proceeding.</div>
+        </div>
+
+        <div class="lesson-card">
+          <h3>1.4 When to Pause and Verify</h3>
+          <p>Claude should interrupt an agentic task and check with the user when:</p>
+          <ul>
+            <li>An action seems <strong>unduly risky</strong></li>
+            <li>Ambiguity about intended scope cannot be resolved</li>
+            <li>An unexpected situation arises mid-task</li>
+            <li>Completing the task would require crossing ethical lines</li>
+          </ul>
+          <p>Best practice: identify and resolve ambiguities <strong>upfront before starting</strong> a long task, rather than interrupting mid-execution.</p>
+        </div>
+
+        <div class="lesson-card">
+          <h3>1.5 Prompt Injection in Agentic Contexts</h3>
+          <p>When Claude browses web pages, reads files, or processes external data, that content may contain <strong>prompt injection</strong> attempts — malicious instructions designed to override Claude's behavior.</p>
+          <h4>Defenses:</h4>
+          <ul>
+            <li>Treat all environmental data as <strong>untrusted</strong></li>
+            <li>Use XML tags to structurally separate instructions from data</li>
+            <li>Be skeptical of permission claims in environmental content</li>
+            <li>Validate tool inputs before execution</li>
+          </ul>
+          <div class="callout callout-warn">⚠️ The "galaxy-brain" failure: a sequence of plausible-looking reasoning that leads to an unsafe conclusion. A persuasive argument to cross a safety line should increase Claude's suspicion, not compliance.</div>
+        </div>
+
+        <div class="lesson-card">
+          <h3>1.6 Tool Call Mechanics</h3>
+          <p>When Claude calls a tool, the API response has <code>stop_reason: "tool_use"</code> and a <code>tool_use</code> content block containing:</p>
+          <pre>{
+  "type": "tool_use",
+  "id": "toolu_01...",     // unique ID — must match tool_result
+  "name": "search_web",   // tool name
+  "input": { "query": "MCP protocol" }
+}</pre>
+          <p>You execute the tool, then send a new user message:</p>
+          <pre>{
+  "role": "user",
+  "content": [{
+    "type": "tool_result",
+    "tool_use_id": "toolu_01...",  // must match
+    "content": "Results: ...",
+    "is_error": false              // true if tool failed
+  }]
+}</pre>
+          <div class="callout callout-tip">💡 Claude can emit multiple <code>tool_use</code> blocks in one turn (parallel tool calls). Execute them concurrently and return all results in a single user message.</div>
+        </div>
+      </div>
+
+      <!-- DOMAIN 2: TOOLS & MCP -->
+      <div id="tools_mcp" style="scroll-margin-top:80px;margin-top:48px">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--border)">
+          <div style="width:48px;height:48px;border-radius:12px;background:#0ea5e920;display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0">🔧</div>
+          <div>
+            <div style="font-size:1.3rem;font-weight:800">Tool Design &amp; MCP</div>
+            <div style="color:var(--text2);font-size:0.88rem">18% of exam · Model Context Protocol, tool definitions, integration patterns</div>
+          </div>
+          <div style="margin-left:auto;font-size:2rem;font-weight:900;color:#0ea5e9">18%</div>
+        </div>
+
+        <div class="lesson-card">
+          <h3>2.1 MCP Architecture</h3>
+          <p>MCP (Model Context Protocol) defines three roles:</p>
+          <ul>
+            <li><strong>Host</strong> — the application (Claude Code, Claude Desktop) that contains MCP clients</li>
+            <li><strong>Client</strong> — maintains a 1:1 connection with an MCP server; handles protocol</li>
+            <li><strong>Server</strong> — exposes capabilities (tools, resources, prompts) via MCP</li>
+          </ul>
+          <h4>MCP Primitives</h4>
+          <ul>
+            <li><strong>Tools</strong> — callable functions with side effects (search, execute, send)</li>
+            <li><strong>Resources</strong> — read-only data sources addressable by URI (files, DB records)</li>
+            <li><strong>Prompts</strong> — parameterized, reusable prompt templates</li>
+          </ul>
+        </div>
+
+        <div class="lesson-card">
+          <h3>2.2 Transport Types</h3>
+          <ul>
+            <li><strong>stdio</strong> — host spawns server as child process; communicates via stdin/stdout. Used for local tools.</li>
+            <li><strong>HTTP + SSE</strong> — client connects to a remote server via HTTP; events stream via Server-Sent Events. Used for remote/cloud servers.</li>
+          </ul>
+          <div class="callout callout-info">ℹ️ For stdio, the host is responsible for spawning the server process. The server's lifecycle is managed by the host.</div>
+        </div>
+
+        <div class="lesson-card">
+          <h3>2.3 Tool Definition Format</h3>
+          <p>Every Anthropic API tool requires three fields:</p>
+          <pre>{
+  "name": "search_documents",           // snake_case, max 64 chars
+  "description": "Search the knowledge base for relevant documents. Use this when the user asks about specific topics. Returns top 5 matching document titles and summaries.",
+  "input_schema": {
+    "type": "object",
+    "properties": {
+      "query": {
+        "type": "string",
+        "description": "Search query — be specific"
+      },
+      "limit": {
+        "type": "integer",
+        "description": "Max results (1-20)",
+        "default": 5
+      }
+    },
+    "required": ["query"]
+  }
+}</pre>
+          <div class="callout callout-tip">💡 The <strong>description</strong> is the most important field. Claude uses it to decide when and how to use the tool. Be specific: what the tool does, when to use it vs. alternatives, what it returns.</div>
+        </div>
+
+        <div class="lesson-card">
+          <h3>2.4 Tool Choice Options</h3>
+          <ul>
+            <li><code>tool_choice: {"type": "auto"}</code> — Claude decides (default)</li>
+            <li><code>tool_choice: {"type": "any"}</code> — Claude must use at least one tool</li>
+            <li><code>tool_choice: {"type": "tool", "name": "X"}</code> — Claude must use tool X</li>
+            <li><code>tool_choice: {"type": "none"}</code> — Claude may not use any tools</li>
+          </ul>
+        </div>
+
+        <div class="lesson-card">
+          <h3>2.5 MCP Sampling</h3>
+          <p>Sampling lets MCP <strong>servers request LLM completions</strong> from the client. This enables servers to use AI capabilities without their own API keys.</p>
+          <p>The client controls whether to honor sampling requests (security boundary). The server sends a <code>sampling/createMessage</code> request; the client forwards to Claude and returns the result.</p>
+        </div>
+
+        <div class="lesson-card">
+          <h3>2.6 Tool Error Handling</h3>
+          <p>When a tool fails, return a <code>tool_result</code> with <code>is_error: true</code>:</p>
+          <pre>{
+  "type": "tool_result",
+  "tool_use_id": "toolu_01...",
+  "content": "Error: connection timeout after 30s",
+  "is_error": true
+}</pre>
+          <p>Claude then reasons about the failure and can: retry, try an alternative, or escalate to the user. Never silently ignore errors.</p>
+        </div>
+      </div>
+
+      <!-- DOMAIN 3: CLAUDE CODE -->
+      <div id="claude_code" style="scroll-margin-top:80px;margin-top:48px">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--border)">
+          <div style="width:48px;height:48px;border-radius:12px;background:#10b98120;display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0">⚙️</div>
+          <div>
+            <div style="font-size:1.3rem;font-weight:800">Claude Code Configuration</div>
+            <div style="color:var(--text2);font-size:0.88rem">20% of exam · CLAUDE.md, settings.json, hooks, permissions, memory</div>
+          </div>
+          <div style="margin-left:auto;font-size:2rem;font-weight:900;color:#10b981">20%</div>
+        </div>
+
+        <div class="lesson-card">
+          <h3>3.1 CLAUDE.md Files</h3>
+          <p>CLAUDE.md provides persistent context loaded automatically at session start. Key details:</p>
+          <ul>
+            <li><code>~/.claude/CLAUDE.md</code> — global user instructions (all projects)</li>
+            <li><code>&lt;project-root&gt;/CLAUDE.md</code> — project-specific context (shared via git)</li>
+            <li>Subdirectory <code>CLAUDE.md</code> files load when Claude works in that directory</li>
+          </ul>
+          <h4>What to include:</h4>
+          <ul>
+            <li>Build/test/lint commands (<code>npm run build</code>, <code>pytest</code>, etc.)</li>
+            <li>Architecture overview and key file paths</li>
+            <li>Coding conventions (naming, formatting, patterns)</li>
+            <li>Team guidelines and important constraints</li>
+          </ul>
+        </div>
+
+        <div class="lesson-card">
+          <h3>3.2 Settings Hierarchy</h3>
+          <ul>
+            <li><code>~/.claude/settings.json</code> — user-level (personal, not shared)</li>
+            <li><code>&lt;project&gt;/.claude/settings.json</code> — project-level (committed to git, shared)</li>
+          </ul>
+          <p>User settings override project settings for conflicting keys. Permission arrays are merged (additive).</p>
+          <pre>// .claude/settings.json
+{
+  "model": "claude-opus-4-7",
+  "permissions": {
+    "allow": ["Bash(git *)", "Bash(npm *)", "Read", "Glob"],
+    "deny": ["Bash(rm -rf *)"]
+  },
+  "mcpServers": {
+    "my-db": {
+      "command": "npx",
+      "args": ["-y", "@company/db-mcp-server"],
+      "env": { "DB_URL": "${DB_URL}" }
+    }
+  }
+}</pre>
+        </div>
+
+        <div class="lesson-card">
+          <h3>3.3 Hooks</h3>
+          <p>Hooks are shell commands that run at lifecycle events:</p>
+          <ul>
+            <li><strong>PreToolUse</strong> — before a tool runs. Exit code <code>2</code> blocks the call; <code>0</code> allows it.</li>
+            <li><strong>PostToolUse</strong> — after a tool runs. Good for formatting, logging, triggering tests.</li>
+            <li><strong>Stop</strong> — when Claude's turn ends. Good for notifications, CI triggers.</li>
+            <li><strong>Notification</strong> — on alert events.</li>
+          </ul>
+          <h4>Hook Environment Variables</h4>
+          <ul>
+            <li><code>CLAUDE_TOOL_NAME</code> — name of the tool being called</li>
+            <li><code>CLAUDE_TOOL_INPUT</code> — JSON string of tool input parameters</li>
+            <li><code>CLAUDE_TOOL_RESULT</code> — JSON of result (PostToolUse only)</li>
+          </ul>
+          <pre>// Hook config in settings.json
+{
+  "hooks": [
+    {
+      "type": "PostToolUse",
+      "tools": ["Write", "Edit"],
+      "command": "npx prettier --write $CLAUDE_TOOL_NAME"
+    },
+    {
+      "type": "Stop",
+      "command": "osascript -e 'display notification \"Claude done\"'"
+    }
+  ]
+}</pre>
+        </div>
+
+        <div class="lesson-card">
+          <h3>3.4 Key Slash Commands</h3>
+          <ul>
+            <li><code>/clear</code> — reset conversation history (keep settings &amp; CLAUDE.md)</li>
+            <li><code>/compact</code> — summarize old turns to reduce context size</li>
+            <li><code>/memory</code> — view and edit persistent CLAUDE.md files</li>
+            <li><code>/cost</code> — show token usage and API cost for session</li>
+            <li><code>/config</code> — open settings UI</li>
+            <li><code>/review</code> — trigger a code review</li>
+            <li><code>/init</code> — generate CLAUDE.md for the project</li>
+          </ul>
+        </div>
+
+        <div class="lesson-card">
+          <h3>3.5 CLI Flags for Automation</h3>
+          <pre># Non-interactive mode (for CI/scripts)
+claude --print "Summarize the changes in this PR"
+claude -p "Run tests and fix any failures" --output-format json
+
+# Restrict tools
+claude --allowedTools "Read,Glob,Grep"
+claude --disallowedTools "Bash"
+
+# Resume a session
+claude --resume
+claude --resume &lt;session-id&gt;
+
+# Select model
+claude --model claude-opus-4-7</pre>
+          <div class="callout callout-tip">💡 <code>--print</code> (or <code>-p</code>) is the key flag for CI/CD. Combined with <code>--output-format json</code>, it enables programmatic processing of Claude's response.</div>
+        </div>
+      </div>
+
+      <!-- DOMAIN 4: PROMPT ENGINEERING -->
+      <div id="prompt_eng" style="scroll-margin-top:80px;margin-top:48px">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--border)">
+          <div style="width:48px;height:48px;border-radius:12px;background:#f59e0b20;display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0">✍️</div>
+          <div>
+            <div style="font-size:1.3rem;font-weight:800">Prompt Engineering</div>
+            <div style="color:var(--text2);font-size:0.88rem">20% of exam · System prompts, few-shot, CoT, XML structure, parameters</div>
+          </div>
+          <div style="margin-left:auto;font-size:2rem;font-weight:900;color:#f59e0b">20%</div>
+        </div>
+
+        <div class="lesson-card">
+          <h3>4.1 Instruction Hierarchy</h3>
+          <p>Claude operates with layered trust levels:</p>
+          <ul>
+            <li><strong>Anthropic training</strong> — absolute limits, cannot be overridden</li>
+            <li><strong>Operator system prompt</strong> — customizes behavior within Anthropic's limits</li>
+            <li><strong>User messages</strong> — operate within what operators allow</li>
+          </ul>
+          <p>The system prompt is operator-level. Use it for: persona, constraints, context, behavioral guidelines. Users can only do what operators permit.</p>
+        </div>
+
+        <div class="lesson-card">
+          <h3>4.2 XML Tags for Structure</h3>
+          <p>Claude is trained to understand XML-style tags as structural delimiters:</p>
+          <pre>&lt;instructions&gt;
+Analyze the document and extract all action items.
+Format each as: [OWNER] Task description (Due: DATE)
+&lt;/instructions&gt;
+
+&lt;document&gt;
+{{DOCUMENT_CONTENT}}
+&lt;/document&gt;
+
+&lt;examples&gt;
+&lt;example&gt;
+  &lt;input&gt;John will finish the report by Friday&lt;/input&gt;
+  &lt;output&gt;[John] Finish the report (Due: Friday)&lt;/output&gt;
+&lt;/example&gt;
+&lt;/examples&gt;</pre>
+          <div class="callout callout-tip">💡 XML tags eliminate ambiguity about what is an instruction vs. what is data. Always use them for complex multi-part prompts.</div>
+        </div>
+
+        <div class="lesson-card">
+          <h3>4.3 Key Parameters</h3>
+          <ul>
+            <li><code>temperature</code> — 0 (deterministic) to 1 (creative). Use 0 for code/facts, higher for creative tasks.</li>
+            <li><code>max_tokens</code> — max tokens in response. Generation stops at this limit (stop_reason: max_tokens).</li>
+            <li><code>top_p</code> — nucleus sampling (default 1.0). Rarely needs adjustment.</li>
+            <li><code>stop_sequences</code> — stop generation when these strings appear.</li>
+            <li><code>stream</code> — true for streaming SSE, false for batch.</li>
+          </ul>
+        </div>
+
+        <div class="lesson-card">
+          <h3>4.4 Chain-of-Thought Prompting</h3>
+          <ul>
+            <li><strong>Standard CoT</strong> — include reasoning examples: show input + reasoning + output</li>
+            <li><strong>Zero-shot CoT</strong> — add "Think step by step" or "Let's reason through this"</li>
+            <li><strong>Extended thinking</strong> — API feature giving Claude a dedicated thinking budget</li>
+          </ul>
+          <p>CoT improves: math, logic, multi-step reasoning, code debugging. Use it for any task where intermediate steps matter.</p>
+        </div>
+
+        <div class="lesson-card">
+          <h3>4.5 Prefilling &amp; Output Control</h3>
+          <pre>// Prefill to force JSON output
+messages: [
+  { role: "user", content: "List the top 3 risks." },
+  { role: "assistant", content: "[" }  // &lt;-- prefill
+]
+// Claude continues from "[", guaranteeing JSON array start</pre>
+          <p>Other output control techniques:</p>
+          <ul>
+            <li>Specify format in instructions: "Respond with only valid JSON"</li>
+            <li>Include a JSON schema or example in the prompt</li>
+            <li>Use stop_sequences: <code>["}"]</code> to end after JSON closes</li>
+          </ul>
+        </div>
+
+        <div class="lesson-card">
+          <h3>4.6 Few-Shot Prompting</h3>
+          <p>Most effective for: specific output formats, niche styles, complex transformations hard to describe verbally.</p>
+          <pre>&lt;examples&gt;
+&lt;example&gt;
+  &lt;input&gt;Translate to formal English: "wanna grab lunch?"&lt;/input&gt;
+  &lt;output&gt;Would you be available for lunch?&lt;/output&gt;
+&lt;/example&gt;
+&lt;example&gt;
+  &lt;input&gt;Translate to formal English: "gonna be late ngl"&lt;/input&gt;
+  &lt;output&gt;I regret to inform you that I will be delayed.&lt;/output&gt;
+&lt;/example&gt;
+&lt;/examples&gt;
+
+&lt;input&gt;Translate to formal English: "{{USER_INPUT}}"&lt;/input&gt;</pre>
+        </div>
+      </div>
+
+      <!-- DOMAIN 5: CONTEXT MANAGEMENT -->
+      <div id="context" style="scroll-margin-top:80px;margin-top:48px">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--border)">
+          <div style="width:48px;height:48px;border-radius:12px;background:#ec489920;display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0">📚</div>
+          <div>
+            <div style="font-size:1.3rem;font-weight:800">Context Management</div>
+            <div style="color:var(--text2);font-size:0.88rem">15% of exam · Context windows, prompt caching, token management, RAG</div>
+          </div>
+          <div style="margin-left:auto;font-size:2rem;font-weight:900;color:#ec4899">15%</div>
+        </div>
+
+        <div class="lesson-card">
+          <h3>5.1 Context Window</h3>
+          <ul>
+            <li>All current Claude models: <strong>200,000 tokens</strong></li>
+            <li>≈ 150,000 words ≈ 500 pages</li>
+            <li>~750 English words per 1,000 tokens</li>
+            <li>If prompt exceeds context window: <strong>API returns an error</strong> (no auto-truncation)</li>
+          </ul>
+          <div class="callout callout-info">ℹ️ The Anthropic API is <strong>stateless</strong> — you must send the full conversation history on every request. There is no session storage server-side.</div>
+        </div>
+
+        <div class="lesson-card">
+          <h3>5.2 Prompt Caching</h3>
+          <p>Cache stable prompt sections to reduce cost and latency:</p>
+          <pre>// Mark content for caching
+{
+  "system": [{
+    "type": "text",
+    "text": "You are a helpful assistant with access to...",
+    "cache_control": { "type": "ephemeral" }   // &lt;-- cache this
+  }],
+  "messages": [...]
+}</pre>
+          <h4>Key Facts:</h4>
+          <ul>
+            <li>Minimum cacheable size: <strong>1,024 tokens</strong></li>
+            <li>Cache TTL: <strong>5 minutes</strong> (resets on each hit)</li>
+            <li>Max breakpoints per request: <strong>4</strong></li>
+            <li>Cache write cost: ~125% of input price (one-time overhead)</li>
+            <li>Cache read cost: ~10% of input price (90% savings!)</li>
+          </ul>
+          <h4>Usage Response Fields:</h4>
+          <ul>
+            <li><code>cache_creation_input_tokens</code> — tokens written to cache (125% cost)</li>
+            <li><code>cache_read_input_tokens</code> — tokens served from cache (10% cost)</li>
+          </ul>
+        </div>
+
+        <div class="lesson-card">
+          <h3>5.3 Token Counting API</h3>
+          <pre>// Count tokens without generating a response
+POST /v1/messages/count_tokens
+{
+  "model": "claude-sonnet-4-6",
+  "system": "...",
+  "messages": [...]
+}
+// Returns: { "input_tokens": 1423 }</pre>
+          <p>Use before sending large requests to verify they fit in the context window and estimate costs.</p>
+        </div>
+
+        <div class="lesson-card">
+          <h3>5.4 Long Context Strategies</h3>
+          <ul>
+            <li><strong>Sliding window</strong> — remove oldest messages when approaching limit. Simple but loses early context.</li>
+            <li><strong>Summarization</strong> — compress older turns into a summary, replace them with it. Preserves semantic content.</li>
+            <li><strong>RAG</strong> — retrieve only relevant chunks from a large corpus, insert into context. Most efficient for large knowledge bases.</li>
+          </ul>
+          <div class="callout callout-tip">💡 "Lost in the middle" — models attend less to content buried in the middle of very long contexts. Put critical instructions at the start and/or end of the prompt.</div>
+        </div>
+
+        <div class="lesson-card">
+          <h3>5.5 Extended Thinking &amp; Tokens</h3>
+          <ul>
+            <li>Extended thinking generates <code>&lt;thinking&gt;</code> blocks before the final response</li>
+            <li>Thinking tokens are billed when generated; they become <strong>input tokens</strong> in subsequent turns if included in history</li>
+            <li>You can strip thinking blocks from history to save tokens (at the cost of losing reasoning continuity)</li>
+            <li>Total cost: input tokens + thinking tokens + output tokens</li>
+          </ul>
+        </div>
+
+        <div class="lesson-card">
+          <h3>5.6 Caching Strategy Example</h3>
+          <pre>// Optimal cache layout for stable system prompt + variable queries
+{
+  "system": [{
+    "type": "text",
+    "text": "&lt;large system prompt - 5000 tokens&gt;",
+    "cache_control": { "type": "ephemeral" }   // cached after first call
+  }],
+  "messages": [{
+    "role": "user",
+    "content": [{
+      "type": "text",
+      "text": "&lt;reference document - 10000 tokens&gt;",
+      "cache_control": { "type": "ephemeral" }  // also cached
+    }, {
+      "type": "text",
+      "text": "User's question here (changes each request)"
+      // no cache_control — this varies
+    }]
+  }]
+}
+// Call 1: pays cache write for system + doc
+// Calls 2+: pays 10% for system + doc, full price only for question</pre>
+        </div>
+      </div>
+
+    </div><!-- /curriculum-content -->
+  </div><!-- /curriculum-layout -->
+</div>
+
+<!-- CTA -->
+<div style="background:var(--surface);border-top:1px solid var(--border);padding:48px 24px;text-align:center">
+  <h2 style="font-size:1.5rem;font-weight:800;margin-bottom:12px">Ready to Test Your Knowledge?</h2>
+  <p style="color:var(--text2);margin-bottom:24px">Put the curriculum into practice with a timed mock exam.</p>
+  <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+    <a href="mock-exam.html" class="btn btn-primary btn-lg">🎯 Take Full Mock Exam</a>
+    <a href="drill.html" class="btn btn-secondary btn-lg">🔁 Drill Mode</a>
+    <a href="diagnostic.html" class="btn btn-outline btn-lg">📊 Diagnostic Test</a>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="footer-brand-logo"><div class="nav-logo" style="width:24px;height:24px;font-size:12px">⬡</div> CCA·F Guide</div>
+      <div class="footer-brand-desc">A free, community-made study guide for the Claude Certified Architect (Foundations) exam. Not affiliated with Anthropic.</div>
+    </div>
+    <div class="footer-col"><h4>Study</h4><a href="learn.html">Curriculum</a><a href="mock-exam.html">Mock Exam</a><a href="drill.html">Drill Mode</a><a href="diagnostic.html">Diagnostic</a></div>
+    <div class="footer-col"><h4>External</h4><a href="https://docs.anthropic.com" target="_blank">Anthropic Docs ↗</a><a href="https://modelcontextprotocol.io" target="_blank">MCP Spec ↗</a></div>
+  </div>
+  <div class="footer-bottom">
+    <div>© 2025 CCA·F Study Guide · Free forever</div>
+    <div class="footer-disclaimer">Not affiliated with Anthropic. "Claude" is a trademark of Anthropic PBC.</div>
+  </div>
+</footer>
+
+<script>
+function setActive(el) {
+  document.querySelectorAll('.curriculum-nav-item').forEach(a => a.classList.remove('active'));
+  el.classList.add('active');
+}
+// Highlight active section on scroll
+const sections = ['agentic','tools_mcp','claude_code','prompt_eng','context'];
+window.addEventListener('scroll', () => {
+  const scrollY = window.scrollY + 100;
+  sections.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.offsetTop <= scrollY && el.offsetTop + el.offsetHeight > scrollY) {
+      document.querySelectorAll('.curriculum-nav-item').forEach(a => {
+        a.classList.toggle('active', a.getAttribute('href') === '#'+id);
+      });
+    }
+  });
+});
+</script>
+</body>
+</html>

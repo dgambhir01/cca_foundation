@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Claude Certified Architect — Free Study Guide</title>
+<meta name="description" content="Free, comprehensive study guide for the Claude Certified Architect (Foundations) exam. 160+ practice questions, mock exams, drill mode, and curriculum across all 5 domains."/>
+<link rel="stylesheet" href="css/styles.css"/>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">
+      <div class="nav-logo">⬡</div>
+      Claude Certified Architect Foundations Guide
+    </a>
+    <div class="nav-links">
+      <a href="learn.html">Curriculum</a>
+      <a href="mock-exam.html">Mock Exam</a>
+      <a href="drill.html">Drill Mode</a>
+      <a href="diagnostic.html">Diagnostic</a>
+      <a href="mock-exam.html" class="nav-cta">Start Exam →</a>
+    </div>
+    <button class="nav-mobile-toggle" onclick="toggleMobileNav()">☰</button>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-badge">✦ Free &amp; Community-Made · No Sign-up Required</div>
+    <h1>Pass the <span class="grad">Claude Certified<br/>Architect</span> Exam</h1>
+    <p>The most complete free study resource for the CCA Foundations exam — 160+ questions, full mock exams, spaced repetition drill mode, and deep curriculum across all 5 tested domains.</p>
+    <div class="hero-actions">
+      <a href="mock-exam.html" class="btn btn-primary btn-lg">🎯 Take Mock Exam</a>
+      <a href="diagnostic.html" class="btn btn-secondary btn-lg">📊 Diagnostic Test</a>
+      <a href="learn.html" class="btn btn-outline btn-lg">📖 Study Curriculum</a>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="hero-stat-val">160+</div><div class="hero-stat-label">Practice Questions</div></div>
+      <div class="hero-stat"><div class="hero-stat-val">5</div><div class="hero-stat-label">Exam Domains</div></div>
+      <div class="hero-stat"><div class="hero-stat-val">60</div><div class="hero-stat-label">Question Mock Exam</div></div>
+      <div class="hero-stat"><div class="hero-stat-val">100%</div><div class="hero-stat-label">Free Forever</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- Domains -->
+<section class="section" style="background:var(--surface)">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">Exam Domains</div>
+      <div class="section-title">Five Areas You'll Be Tested On</div>
+      <div class="section-sub">The CCA Foundations exam covers these domains in these proportions — our content mirrors the real distribution.</div>
+    </div>
+    <div class="grid-5" id="domain-cards"></div>
+  </div>
+</section>
+
+<!-- Features -->
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">Study Tools</div>
+      <div class="section-title">Everything You Need to Pass</div>
+    </div>
+    <div class="grid-3">
+      <div class="card">
+        <div style="font-size:2rem;margin-bottom:12px">🎯</div>
+        <div class="card-title">Full Mock Exam</div>
+        <div class="card-desc">60 questions, 90-minute timer, weighted by domain — mirrors real exam conditions. Instant scoring with detailed per-domain breakdown.</div>
+        <div style="margin-top:16px"><a href="mock-exam.html" class="btn btn-secondary btn-sm">Start →</a></div>
+      </div>
+      <div class="card">
+        <div style="font-size:2rem;margin-bottom:12px">🔁</div>
+        <div class="card-title">Spaced Repetition Drill</div>
+        <div class="card-desc">Flashcard-style practice with built-in spaced repetition — hard questions resurface sooner, mastered ones less often. Train by domain or all at once.</div>
+        <div style="margin-top:16px"><a href="drill.html" class="btn btn-secondary btn-sm">Drill Now →</a></div>
+      </div>
+      <div class="card">
+        <div style="font-size:2rem;margin-bottom:12px">📊</div>
+        <div class="card-title">Diagnostic Test</div>
+        <div class="card-desc">25-question assessment (5 per domain) to quickly identify your weak areas. Get a personalized study plan showing exactly where to focus.</div>
+        <div style="margin-top:16px"><a href="diagnostic.html" class="btn btn-secondary btn-sm">Diagnose →</a></div>
+      </div>
+      <div class="card">
+        <div style="font-size:2rem;margin-bottom:12px">📖</div>
+        <div class="card-title">Deep Curriculum</div>
+        <div class="card-desc">Structured lessons for all 5 domains with key concepts, code examples, and practical explanations grounded in Anthropic's official documentation.</div>
+        <div style="margin-top:16px"><a href="learn.html" class="btn btn-secondary btn-sm">Study →</a></div>
+      </div>
+      <div class="card">
+        <div style="font-size:2rem;margin-bottom:12px">💡</div>
+        <div class="card-title">Answer Explanations</div>
+        <div class="card-desc">Every question includes a detailed explanation of why the correct answer is right and why each distractor is wrong — you learn, not just test.</div>
+        <div style="margin-top:16px"><a href="mock-exam.html" class="btn btn-secondary btn-sm">See Example →</a></div>
+      </div>
+      <div class="card">
+        <div style="font-size:2rem;margin-bottom:12px">📈</div>
+        <div class="card-title">Progress Tracking</div>
+        <div class="card-desc">Your scores and spaced repetition state are saved locally in your browser. Track improvement over time without creating an account.</div>
+        <div style="margin-top:16px"><span class="chip">🔒 Local Only · No Account</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Exam Overview -->
+<section class="section" style="background:var(--surface)">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">Exam Overview</div>
+      <div class="section-title">What to Expect on the Real Exam</div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">📋 Exam Format</div>
+        <ul style="list-style:none;padding:0;margin-top:12px">
+          <li style="padding:8px 0;border-bottom:1px solid var(--border);font-size:0.9rem;color:var(--text2)"><strong style="color:var(--text)">Provider:</strong> Anthropic via Skilljar</li>
+          <li style="padding:8px 0;border-bottom:1px solid var(--border);font-size:0.9rem;color:var(--text2)"><strong style="color:var(--text)">Format:</strong> Multiple choice, single-select</li>
+          <li style="padding:8px 0;border-bottom:1px solid var(--border);font-size:0.9rem;color:var(--text2)"><strong style="color:var(--text)">Questions:</strong> ~60 questions</li>
+          <li style="padding:8px 0;border-bottom:1px solid var(--border);font-size:0.9rem;color:var(--text2)"><strong style="color:var(--text)">Duration:</strong> 90 minutes</li>
+          <li style="padding:8px 0;font-size:0.9rem;color:var(--text2)"><strong style="color:var(--text)">Level:</strong> Foundations (developer-focused)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-title">🎯 Domain Weights</div>
+        <div style="margin-top:16px;display:flex;flex-direction:column;gap:12px" id="domain-weights"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section">
+  <div class="container container-sm">
+    <div class="section-header">
+      <div class="section-label">FAQ</div>
+      <div class="section-title">Common Questions</div>
+    </div>
+    <div id="faq-list"></div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="section" style="background:var(--surface)">
+  <div class="container" style="text-align:center">
+    <div style="font-size:3rem;margin-bottom:16px">🚀</div>
+    <h2 style="font-size:1.8rem;font-weight:800;margin-bottom:12px">Ready to Start?</h2>
+    <p style="color:var(--text2);margin-bottom:28px;max-width:480px;margin-left:auto;margin-right:auto">Take the diagnostic test first to see where you stand, then focus your study on the weakest domains.</p>
+    <div class="hero-actions">
+      <a href="diagnostic.html" class="btn btn-primary btn-lg">📊 Take Diagnostic First</a>
+      <a href="mock-exam.html" class="btn btn-secondary btn-lg">🎯 Jump to Mock Exam</a>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="footer-brand-logo"><div class="nav-logo" style="width:24px;height:24px;font-size:12px">⬡</div> CCA·F Guide</div>
+      <div class="footer-brand-desc">A free, community-made study guide for the Claude Certified Architect (Foundations) exam. Not affiliated with or endorsed by Anthropic.</div>
+    </div>
+    <div class="footer-col">
+      <h4>Study</h4>
+      <a href="learn.html">Curriculum</a>
+      <a href="mock-exam.html">Mock Exam</a>
+      <a href="drill.html">Drill Mode</a>
+      <a href="diagnostic.html">Diagnostic</a>
+    </div>
+    <div class="footer-col">
+      <h4>Domains</h4>
+      <a href="learn.html#agentic">Agentic Architecture</a>
+      <a href="learn.html#tools_mcp">Tool Design &amp; MCP</a>
+      <a href="learn.html#claude_code">Claude Code</a>
+      <a href="learn.html#prompt_eng">Prompt Engineering</a>
+      <a href="learn.html#context">Context Management</a>
+    </div>
+    <div class="footer-col">
+      <h4>External</h4>
+      <a href="https://docs.anthropic.com" target="_blank" rel="noopener">Anthropic Docs ↗</a>
+      <a href="https://modelcontextprotocol.io" target="_blank" rel="noopener">MCP Spec ↗</a>
+      <a href="https://www.anthropic.com/claude" target="_blank" rel="noopener">Claude ↗</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div>© 2026 Claude Certified Architect- Foundations Study Guide · Free forever</div>
+    <div class="footer-disclaimer">Not affiliated with Anthropic. "Claude" is a trademark of Anthropic PBC. This is an independent, community-made resource based on public documentation.</div>
+  </div>
+</footer>
+
+<script src="js/questions.js"></script>
+<script>
+// Render domain cards
+const dc = document.getElementById('domain-cards');
+Object.values(DOMAINS).forEach(d => {
+  dc.innerHTML += `
+    <a href="learn.html#${d.id}" class="domain-card" style="background:linear-gradient(135deg,${d.color}18,${d.color}08);border-color:${d.color}30;text-decoration:none;color:var(--text)">
+      <div class="domain-icon">${d.icon}</div>
+      <div class="domain-name">${d.name}</div>
+      <div style="margin-top:8px">
+        <span class="domain-weight" style="color:${d.color}">${d.weight}%</span>
+        <div class="domain-weight-label">of exam</div>
+      </div>
+    </a>`;
+});
+
+// Render domain weights
+const dw = document.getElementById('domain-weights');
+Object.values(DOMAINS).forEach(d => {
+  dw.innerHTML += `
+    <div>
+      <div style="display:flex;justify-content:space-between;font-size:0.85rem;margin-bottom:4px">
+        <span>${d.icon} ${d.name}</span><span style="color:${d.color};font-weight:700">${d.weight}%</span>
+      </div>
+      <div class="progress-wrap"><div class="progress-bar" style="width:${d.weight}%;background:${d.color}"></div></div>
+    </div>`;
+});
+
+// FAQ
+const faqs = [
+  {q:"What is the Claude Certified Architect (Foundations) exam?", a:"The CCA Foundations exam is Anthropic's official certification for developers and architects working with Claude. It validates expertise across agentic architecture, tool design, Claude Code configuration, prompt engineering, and context management."},
+  {q:"Who should take this exam?", a:"Developers building applications with Claude's API, solutions architects designing multi-agent systems, and engineers working with Claude Code and MCP integrations. The Foundations level is the entry-level certification."},
+  {q:"How hard is the exam?", a:"The exam tests practical, applied knowledge — not just definitions. Questions often involve understanding nuanced trade-offs and knowing which approach is best in specific scenarios. Our questions are calibrated to match that difficulty level."},
+  {q:"Is this guide affiliated with Anthropic?", a:"No. This is a community-made study resource based on Anthropic's public documentation. We are not affiliated with or endorsed by Anthropic. Always refer to official Anthropic documentation for authoritative information."},
+  {q:"Where do I register for the official exam?", a:"The official Claude Certified Architect exam is administered via Anthropic's learning portal. Visit Anthropic's website for registration information and official exam details."},
+  {q:"How should I use this guide?", a:"Start with the Diagnostic Test to identify weak areas → study those domains in the Curriculum → use Drill Mode for daily practice → take a full Mock Exam to simulate real conditions → review missed questions → repeat until you consistently score 80%+."}
+];
+const fl = document.getElementById('faq-list');
+faqs.forEach((f,i) => {
+  fl.innerHTML += `
+    <div class="faq-item" id="faq${i}">
+      <div class="faq-q" onclick="toggleFAQ(${i})">${f.q}<span class="arrow">▾</span></div>
+      <div class="faq-a">${f.a}</div>
+    </div>`;
+});
+function toggleFAQ(i) {
+  const el = document.getElementById('faq'+i);
+  el.classList.toggle('open');
+}
+
+function toggleMobileNav() {
+  const links = document.querySelector('.nav-links');
+  links.style.display = links.style.display === 'flex' ? 'none' : 'flex';
+  links.style.flexDirection = 'column';
+  links.style.position = 'absolute';
+  links.style.top = '60px';
+  links.style.left = '0';
+  links.style.right = '0';
+  links.style.background = 'var(--surface)';
+  links.style.padding = '16px 24px';
+  links.style.borderBottom = '1px solid var(--border)';
+}
+</script>
+</body>
+</html>

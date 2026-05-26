@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Drill Mode — CCA·F Guide</title>
+<link rel="stylesheet" href="css/styles.css"/>
+</head>
+<body>
+
+<!-- ── Intro Splash ── -->
+<div id="intro-screen" class="splash">
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-brand"><div class="nav-logo">⬡</div> Claude Certified Architect Foundations Guide</a>
+      <div class="nav-links">
+        <a href="learn.html">Curriculum</a>
+        <a href="mock-exam.html">Mock Exam</a>
+        <a href="drill.html" class="active">Drill Mode</a>
+        <a href="diagnostic.html">Diagnostic</a>
+      </div>
+    </div>
+  </nav>
+  <div class="splash-body">
+    <div class="splash-card">
+      <div class="splash-icon">🔁</div>
+      <h1 class="splash-title text-center">Spaced Repetition Drill</h1>
+      <p class="splash-sub text-center">Rate each question Hard / OK / Easy. Hard cards resurface soon; easy ones fade away. Progress is saved locally — pick up where you left off.</p>
+
+      <!-- Domain select -->
+      <div style="margin-bottom:20px">
+        <div style="font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text3);margin-bottom:12px">Choose Domain</div>
+        <div id="domain-buttons" style="display:flex;flex-direction:column;gap:8px"></div>
+      </div>
+
+      <!-- How it works -->
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:20px">
+        <div style="font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text3);margin-bottom:10px">How It Works</div>
+        <div style="display:flex;flex-direction:column;gap:7px;font-size:0.875rem;color:var(--text2)">
+          <div style="display:flex;align-items:center;gap:10px"><span style="color:var(--red);font-weight:700;width:60px">❌ Hard</span><span>Shows again in the next session</span></div>
+          <div style="display:flex;align-items:center;gap:10px"><span style="color:var(--yellow);font-weight:700;width:60px">～ OK</span><span>Shows again in a few sessions</span></div>
+          <div style="display:flex;align-items:center;gap:10px"><span style="color:var(--green);font-weight:700;width:60px">✓ Easy</span><span>Shows much later — you've mastered it</span></div>
+        </div>
+      </div>
+
+      <button onclick="resetProgress()" class="btn btn-secondary btn-sm" style="color:var(--text3)">🗑 Reset Progress</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Drill Shell ── -->
+<div id="drill-shell" class="drill-shell hidden">
+  <div class="drill-header">
+    <div style="display:flex;align-items:center;gap:14px">
+      <button onclick="exitDrill()" class="btn btn-secondary btn-sm">← Exit</button>
+      <span id="drill-domain-label" class="chip"></span>
+      <span id="drill-progress" style="font-size:0.85rem;color:var(--text2)"></span>
+    </div>
+    <div id="drill-stats" style="font-size:0.82rem;color:var(--text2)"></div>
+  </div>
+
+  <div class="drill-body">
+    <div class="flashcard-wrap">
+
+      <!-- Flashcard -->
+      <div class="flashcard" id="flashcard">
+        <div>
+          <div id="fc-domain" style="margin-bottom:14px"></div>
+          <div class="flashcard-question" id="fc-question"></div>
+        </div>
+        <div class="flashcard-actions">
+          <button onclick="revealAnswer()" class="btn btn-primary btn-lg">👁 Reveal Answer</button>
+        </div>
+      </div>
+
+      <!-- Answer reveal -->
+      <div class="answer-reveal" id="answer-reveal">
+        <div class="correct-answer" id="fc-correct"></div>
+        <div class="explanation-text" id="fc-explanation"></div>
+      </div>
+
+      <!-- Rating -->
+      <div class="drill-rate-wrap" id="rate-wrap">
+        <p style="color:var(--text2);font-size:0.85rem;margin-bottom:2px">How well did you know this?</p>
+        <div class="drill-rate-btns">
+          <button class="rate-btn rate-hard" onclick="rate('hard')">❌ Hard</button>
+          <button class="rate-btn rate-ok"   onclick="rate('ok')">～ OK</button>
+          <button class="rate-btn rate-easy" onclick="rate('easy')">✓ Easy</button>
+        </div>
+      </div>
+
+      <!-- All done -->
+      <div id="all-done-msg" class="hidden" style="text-align:center;padding:56px 24px">
+        <div style="font-size:3.5rem;margin-bottom:20px">🎉</div>
+        <h3 style="font-size:1.5rem;font-weight:800;margin-bottom:10px;letter-spacing:-0.01em">All caught up!</h3>
+        <p style="color:var(--text2);margin-bottom:28px;line-height:1.7">No due cards right now.<br/>Come back later — spaced repetition will queue more soon.</p>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+          <button onclick="exitDrill()" class="btn btn-secondary btn-lg">← Choose Domain</button>
+          <a href="mock-exam.html" class="btn btn-primary btn-lg">🎯 Take Mock Exam</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/questions.js"></script>
+<script>
+let drillQueue = [], drillIdx = 0;
+let sessionCorrect = 0, sessionTotal = 0;
+
+function initIntro() {
+  const state = getSRState();
+  const now = Date.now();
+  const db = document.getElementById('domain-buttons');
+  db.innerHTML = '';
+
+  // All domains button
+  const allDue = QUESTIONS.filter(q => !state[q.id] || state[q.id].due <= now).length;
+  db.innerHTML += `
+    <button onclick="startDrill('all')" class="btn btn-primary" style="justify-content:space-between;width:100%">
+      <span style="display:flex;align-items:center;gap:8px"><span>🌐</span> All Domains</span>
+      <span style="font-size:0.78rem;opacity:0.85;background:rgba(255,255,255,0.15);padding:2px 8px;border-radius:100px">${allDue} due · ${QUESTIONS.length} total</span>
+    </button>`;
+
+  // Per-domain
+  Object.values(DOMAINS).forEach(d => {
+    const pool = QUESTIONS_BY_DOMAIN[d.id];
+    const due = pool.filter(q => !state[q.id] || state[q.id].due <= now).length;
+    db.innerHTML += `
+      <button onclick="startDrill('${d.id}')" class="btn btn-secondary" style="justify-content:space-between;width:100%">
+        <span style="display:flex;align-items:center;gap:8px"><span>${d.icon}</span> ${d.name}</span>
+        <span style="font-size:0.78rem;color:${d.color};background:${d.color}18;border:1px solid ${d.color}33;padding:2px 10px;border-radius:100px">${due} due · ${pool.length} total</span>
+      </button>`;
+  });
+}
+
+function startDrill(domain) {
+  drillQueue = getDueQuestions(domain);
+  drillIdx = 0; sessionCorrect = 0; sessionTotal = 0;
+
+  document.getElementById('intro-screen').classList.add('hidden');
+  document.getElementById('drill-shell').classList.remove('hidden');
+
+  const d = domain === 'all'
+    ? { name: 'All Domains', icon: '🌐', color: 'var(--accent-lt)' }
+    : DOMAINS[domain];
+  const label = document.getElementById('drill-domain-label');
+  label.textContent = `${d.icon} ${d.name}`;
+  label.style.cssText = `color:${d.color};background:${d.color}18;border:1px solid ${d.color}44`;
+
+  drillQueue.length === 0 ? showAllDone() : showCard();
+}
+
+function showCard() {
+  if (drillIdx >= drillQueue.length) { showAllDone(); return; }
+  const q = drillQueue[drillIdx];
+  const d = DOMAINS[q.domain];
+
+  // Reset UI
+  document.getElementById('all-done-msg').classList.add('hidden');
+  const fc = document.getElementById('flashcard');
+  fc.style.display = 'flex';
+  document.getElementById('answer-reveal').className = 'answer-reveal';
+  document.getElementById('rate-wrap').className = 'drill-rate-wrap';
+  document.querySelector('.flashcard-actions').style.display = 'flex';
+
+  // Fill content
+  document.getElementById('fc-domain').innerHTML =
+    `<span class="domain-pill" style="color:${d.color};background:${d.color}18;border:1px solid ${d.color}44">${d.icon} ${d.name}</span>`;
+  document.getElementById('fc-question').textContent = q.question;
+  document.getElementById('fc-correct').textContent = `✅ ${q.options[q.correct]}`;
+  document.getElementById('fc-explanation').textContent = q.explanation;
+
+  updateProgress();
+}
+
+function revealAnswer() {
+  document.getElementById('answer-reveal').classList.add('visible');
+  document.getElementById('rate-wrap').classList.add('visible');
+  document.querySelector('.flashcard-actions').style.display = 'none';
+}
+
+function rate(rating) {
+  const q = drillQueue[drillIdx];
+  updateSR(q.id, rating);
+  sessionTotal++;
+  if (rating !== 'hard') sessionCorrect++;
+  drillIdx++;
+
+  // Brief fade animation
+  const fc = document.getElementById('flashcard');
+  fc.style.opacity = '0'; fc.style.transform = 'translateY(-6px)';
+  setTimeout(() => {
+    fc.style.opacity = '1'; fc.style.transform = 'translateY(0)';
+    fc.style.transition = 'opacity 0.2s,transform 0.2s';
+    showCard();
+  }, 150);
+}
+
+function updateProgress() {
+  document.getElementById('drill-progress').textContent =
+    `Card ${drillIdx + 1} of ${drillQueue.length}`;
+  document.getElementById('drill-stats').textContent = sessionTotal > 0
+    ? `Session: ${sessionCorrect}/${sessionTotal} known (${Math.round(sessionCorrect/sessionTotal*100)}%)`
+    : '';
+}
+
+function showAllDone() {
+  document.getElementById('flashcard').style.display = 'none';
+  document.getElementById('answer-reveal').className = 'answer-reveal';
+  document.getElementById('rate-wrap').className = 'drill-rate-wrap';
+  document.getElementById('all-done-msg').classList.remove('hidden');
+}
+
+function exitDrill() {
+  document.getElementById('drill-shell').classList.add('hidden');
+  document.getElementById('intro-screen').classList.remove('hidden');
+  initIntro();
+}
+
+function resetProgress() {
+  if (confirm('Reset all spaced repetition progress? This cannot be undone.')) {
+    localStorage.removeItem(SR_KEY);
+    initIntro();
+  }
+}
+
+initIntro();
+</script>
+</body>
+</html>

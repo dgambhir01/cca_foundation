@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Mock Exam — CCA·F Guide</title>
+<link rel="stylesheet" href="css/styles.css"/>
+</head>
+<body>
+
+<!-- ── Intro Splash ── -->
+<div id="intro-screen" class="splash">
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-brand">
+        <div class="nav-logo">⬡</div> Claude Certified Architect Foundations Guide
+      </a>
+      <div class="nav-links">
+        <a href="learn.html">Curriculum</a>
+        <a href="mock-exam.html" class="active">Mock Exam</a>
+        <a href="drill.html">Drill Mode</a>
+        <a href="diagnostic.html">Diagnostic</a>
+      </div>
+    </div>
+  </nav>
+  <div class="splash-body">
+    <div class="splash-card">
+      <div class="splash-icon">🎯</div>
+      <h1 class="splash-title text-center">Full Mock Exam</h1>
+      <p class="splash-sub text-center">60 questions weighted by real exam domain proportions. Each attempt uses a fresh random selection from our 160+ question bank.</p>
+
+      <div class="info-grid">
+        <div class="info-tile">
+          <div class="info-tile-icon">📋</div>
+          <div class="info-tile-title">60 Questions</div>
+          <div class="info-tile-desc">Multiple-choice · 4 options · Single correct answer</div>
+        </div>
+        <div class="info-tile">
+          <div class="info-tile-icon">⏱️</div>
+          <div class="info-tile-title">90 Minutes</div>
+          <div class="info-tile-desc">~90 seconds per question · Visible countdown timer</div>
+        </div>
+        <div class="info-tile">
+          <div class="info-tile-icon">💡</div>
+          <div class="info-tile-title">Instant Feedback</div>
+          <div class="info-tile-desc">Explanation shown after every answer</div>
+        </div>
+        <div class="info-tile">
+          <div class="info-tile-icon">📊</div>
+          <div class="info-tile-title">Passing Score</div>
+          <div class="info-tile-desc">70% (42/60) · Per-domain breakdown on results</div>
+        </div>
+      </div>
+
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:24px">
+        <div style="font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text3);margin-bottom:10px">Domain Weights</div>
+        <div id="weight-bars" style="display:flex;flex-direction:column;gap:7px"></div>
+      </div>
+
+      <button onclick="startExam()" class="btn btn-primary btn-xl w-full" style="justify-content:center;font-size:1rem">
+        Start Mock Exam →
+      </button>
+      <a href="index.html" class="btn btn-secondary w-full mt-8" style="justify-content:center">← Back to Home</a>
+    </div>
+  </div>
+</div>
+
+<!-- ── Exam Shell ── -->
+<div id="exam-shell" class="quiz-shell hidden">
+  <!-- Header -->
+  <div class="quiz-header">
+    <div class="quiz-header-left">
+      <a href="index.html" style="color:var(--text3);font-size:0.82rem;font-weight:600;text-decoration:none;display:flex;align-items:center;gap:6px">
+        <span style="font-size:16px">⬡</span> CCA·F
+      </a>
+      <div class="quiz-counter">
+        Question <strong id="q-num">1</strong> of <strong id="q-total">60</strong>
+      </div>
+      <span id="domain-chip" class="domain-pill"></span>
+    </div>
+    <div style="display:flex;align-items:center;gap:16px">
+      <div style="width:160px">
+        <div class="progress-wrap">
+          <div class="progress-bar" id="q-progress" style="width:0%"></div>
+        </div>
+      </div>
+      <div class="quiz-timer" id="timer">⏱ 90:00</div>
+    </div>
+  </div>
+
+  <!-- Body -->
+  <div class="quiz-body">
+    <div class="quiz-q-wrap">
+      <!-- Question number indicator -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+        <span id="q-difficulty" class="chip"></span>
+        <span class="quiz-score-live" id="score-live">Score: 0/0</span>
+      </div>
+
+      <!-- Question text -->
+      <div class="quiz-question" id="question-text"></div>
+
+      <!-- Options -->
+      <div class="quiz-options" id="options-list"></div>
+
+      <!-- Explanation -->
+      <div class="quiz-explanation" id="explanation"></div>
+
+      <!-- Actions -->
+      <div class="quiz-actions">
+        <div></div>
+        <button id="next-btn" onclick="nextQuestion()" class="btn btn-primary hidden">
+          Next Question →
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Results ── -->
+<div id="results-screen" class="hidden">
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-brand"><div class="nav-logo">⬡</div> CCA·F Guide</a>
+      <div class="nav-links">
+        <a href="learn.html">Curriculum</a>
+        <a href="mock-exam.html" class="active">Mock Exam</a>
+        <a href="drill.html">Drill Mode</a>
+        <a href="diagnostic.html">Diagnostic</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="results-wrap">
+    <!-- Score circle -->
+    <div class="results-score">
+      <div class="results-circle" id="score-circle">
+        <div class="results-pct" id="score-pct">0%</div>
+        <div class="results-pct-label">Score</div>
+      </div>
+      <div id="pass-fail" style="margin-bottom:8px;font-size:1.2rem"></div>
+      <div id="score-summary" style="color:var(--text2);font-size:0.9rem"></div>
+    </div>
+
+    <!-- Domain breakdown -->
+    <div class="card mb-24">
+      <div class="card-title" style="margin-bottom:20px">📊 Domain Breakdown</div>
+      <div class="domain-breakdown" id="domain-breakdown"></div>
+    </div>
+
+    <!-- Missed questions -->
+    <div id="missed-section" class="card mb-24">
+      <div class="card-title">❌ Missed Questions — Review &amp; Learn</div>
+      <div class="card-desc mb-16" style="margin-top:4px">These are the questions you got wrong. Study the explanations to avoid the same mistakes.</div>
+      <div id="missed-list"></div>
+    </div>
+
+    <!-- CTA buttons -->
+    <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center">
+      <button onclick="location.reload()" class="btn btn-primary btn-lg">🔄 Retake Exam</button>
+      <a href="drill.html" class="btn btn-secondary btn-lg">🔁 Drill Weak Areas</a>
+      <a href="learn.html" class="btn btn-outline btn-lg">📖 Review Curriculum</a>
+    </div>
+  </div>
+</div>
+
+<script src="js/questions.js"></script>
+<script>
+let exam = [], current = 0, score = 0, answered = false;
+let domainCorrect = {}, domainTotal = {};
+let missedQs = [];
+let timerInterval, secondsLeft = 90 * 60;
+
+// Render weight bars on splash
+(function() {
+  const wb = document.getElementById('weight-bars');
+  Object.values(DOMAINS).forEach(d => {
+    wb.innerHTML += `
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:0.82rem;width:170px;color:var(--text2);flex-shrink:0">${d.icon} ${d.name}</span>
+        <div style="flex:1"><div class="progress-wrap"><div class="progress-bar" style="width:${d.weight}%;background:${d.color}"></div></div></div>
+        <span style="font-size:0.82rem;font-weight:700;color:${d.color};width:30px;text-align:right">${d.weight}%</span>
+      </div>`;
+  });
+})();
+
+function startExam() {
+  exam = buildMockExam();
+  Object.keys(DOMAINS).forEach(d => { domainCorrect[d] = 0; domainTotal[d] = 0; });
+  missedQs = [];
+  document.getElementById('intro-screen').classList.add('hidden');
+  document.getElementById('exam-shell').classList.remove('hidden');
+  document.getElementById('q-total').textContent = exam.length;
+  startTimer();
+  showQuestion();
+}
+
+function startTimer() {
+  updateTimerDisplay();
+  timerInterval = setInterval(() => {
+    secondsLeft--;
+    updateTimerDisplay();
+    if (secondsLeft <= 0) { clearInterval(timerInterval); finishExam(); }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(secondsLeft / 60), s = secondsLeft % 60;
+  const el = document.getElementById('timer');
+  el.textContent = `⏱ ${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  el.className = 'quiz-timer' +
+    (secondsLeft < 300 ? ' danger' : secondsLeft < 600 ? ' warning' : '');
+}
+
+function showQuestion() {
+  answered = false;
+  const q = exam[current];
+  const d = DOMAINS[q.domain];
+
+  document.getElementById('q-num').textContent = current + 1;
+  document.getElementById('q-progress').style.width = `${(current / exam.length) * 100}%`;
+
+  // Domain chip
+  const chip = document.getElementById('domain-chip');
+  chip.textContent = `${d.icon} ${d.name}`;
+  chip.style.cssText = `color:${d.color};background:${d.color}18;border:1px solid ${d.color}44;padding:4px 12px;border-radius:100px;font-size:0.75rem;font-weight:700`;
+
+  // Difficulty
+  const diffEl = document.getElementById('q-difficulty');
+  const diffColors = { easy:'var(--green)', medium:'var(--yellow)', hard:'var(--red)' };
+  diffEl.textContent = (q.difficulty || 'medium').charAt(0).toUpperCase() + (q.difficulty||'medium').slice(1);
+  diffEl.style.cssText = `color:${diffColors[q.difficulty||'medium']};background:${diffColors[q.difficulty||'medium']}18;border-color:${diffColors[q.difficulty||'medium']}44;font-size:0.75rem;font-weight:700`;
+
+  document.getElementById('question-text').textContent = q.question;
+  document.getElementById('explanation').className = 'quiz-explanation';
+  document.getElementById('explanation').innerHTML = '';
+  document.getElementById('next-btn').classList.add('hidden');
+  document.getElementById('next-btn').onclick = nextQuestion;
+  document.getElementById('score-live').textContent = `Score: ${score}/${current}`;
+
+  const opts = document.getElementById('options-list');
+  opts.innerHTML = '';
+  ['A','B','C','D'].forEach((ltr, i) => {
+    opts.innerHTML += `
+      <button class="quiz-option" onclick="selectOption(${i})" id="opt-${i}">
+        <span class="quiz-option-letter">${ltr}</span>
+        <span class="quiz-option-text">${q.options[i]}</span>
+      </button>`;
+  });
+}
+
+function selectOption(idx) {
+  if (answered) return;
+  answered = true;
+  const q = exam[current];
+  domainTotal[q.domain]++;
+
+  // Disable all
+  document.querySelectorAll('.quiz-option').forEach(el => el.classList.add('disabled'));
+
+  // Mark correct / incorrect
+  const chosen = document.getElementById(`opt-${idx}`);
+  const correctEl = document.getElementById(`opt-${q.correct}`);
+  chosen.classList.add(idx === q.correct ? 'correct' : 'incorrect');
+  if (idx !== q.correct) correctEl.classList.add('correct');
+
+  if (idx === q.correct) { score++; domainCorrect[q.domain]++; }
+  else missedQs.push({ q, chosen: q.options[idx] });
+
+  // Show explanation
+  const exp = document.getElementById('explanation');
+  const icon = idx === q.correct ? '✅' : '❌';
+  const label = idx === q.correct ? 'Correct!' : 'Incorrect.';
+  exp.innerHTML = `<strong>${icon} ${label}</strong> ${q.explanation}`;
+  exp.classList.add('visible');
+
+  document.getElementById('score-live').textContent = `Score: ${score}/${current + 1}`;
+
+  const nb = document.getElementById('next-btn');
+  nb.classList.remove('hidden');
+  if (current >= exam.length - 1) {
+    nb.textContent = 'See Results →';
+    nb.onclick = finishExam;
+  }
+}
+
+function nextQuestion() {
+  current++;
+  showQuestion();
+}
+
+function finishExam() {
+  clearInterval(timerInterval);
+  document.getElementById('exam-shell').classList.add('hidden');
+  document.getElementById('results-screen').classList.remove('hidden');
+
+  const pct = Math.round(score / exam.length * 100);
+  const passed = pct >= 70;
+
+  document.getElementById('score-pct').textContent = pct + '%';
+  const circle = document.getElementById('score-circle');
+  circle.style.borderColor = passed ? 'var(--green)' : 'var(--red)';
+  circle.style.boxShadow = passed ? '0 0 40px rgba(34,197,94,0.25)' : '0 0 40px rgba(248,113,113,0.25)';
+
+  document.getElementById('pass-fail').innerHTML = passed
+    ? '<span class="results-pass">✅ PASSED — Excellent work!</span>'
+    : '<span class="results-fail">❌ Not Passed — Keep studying!</span>';
+  document.getElementById('score-summary').textContent =
+    `${score} correct out of ${exam.length} · Passing threshold: 70% (${Math.ceil(exam.length * 0.7)}/${exam.length})`;
+
+  // Domain breakdown
+  const domainScores = {};
+  const db = document.getElementById('domain-breakdown');
+  db.innerHTML = '';
+  Object.values(DOMAINS).forEach(d => {
+    const c = domainCorrect[d.id] || 0;
+    const t = domainTotal[d.id] || 0;
+    const p = t > 0 ? Math.round(c / t * 100) : 0;
+    domainScores[d.id] = p;
+    const barColor = p >= 70 ? 'var(--green)' : p >= 50 ? 'var(--yellow)' : 'var(--red)';
+    db.innerHTML += `
+      <div class="domain-row">
+        <div class="domain-row-name">${d.icon} ${d.name}</div>
+        <div class="domain-row-bar">
+          <div class="progress-wrap">
+            <div class="progress-bar" style="width:${p}%;background:${barColor}"></div>
+          </div>
+        </div>
+        <div class="domain-row-score" style="color:${barColor}">${c}/${t}</div>
+      </div>`;
+  });
+
+  // Missed questions
+  const ml = document.getElementById('missed-list');
+  if (missedQs.length === 0) {
+    document.getElementById('missed-section').classList.add('hidden');
+  } else {
+    missedQs.forEach(({ q, chosen }) => {
+      const d = DOMAINS[q.domain];
+      ml.innerHTML += `
+        <div style="border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+            <span style="color:${d.color};background:${d.color}18;border:1px solid ${d.color}44;padding:3px 10px;border-radius:100px;font-size:0.73rem;font-weight:700">${d.icon} ${d.name}</span>
+          </div>
+          <div style="font-size:0.92rem;font-weight:600;margin-bottom:12px;color:var(--text);line-height:1.5">${q.question}</div>
+          <div style="font-size:0.84rem;color:var(--red);margin-bottom:5px;display:flex;align-items:flex-start;gap:6px">
+            <span>❌</span><span>Your answer: ${chosen}</span>
+          </div>
+          <div style="font-size:0.84rem;color:var(--green);margin-bottom:12px;display:flex;align-items:flex-start;gap:6px">
+            <span>✅</span><span>Correct: ${q.options[q.correct]}</span>
+          </div>
+          <div style="font-size:0.84rem;color:var(--text2);line-height:1.7;padding:12px 14px;background:var(--surface2);border-radius:var(--radius-sm);border-left:3px solid var(--accent)">${q.explanation}</div>
+        </div>`;
+    });
+  }
+
+  saveScore('mock', score, exam.length, domainScores);
+}
+</script>
+</body>
+</html>
