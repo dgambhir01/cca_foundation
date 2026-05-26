@@ -977,3 +977,72 @@ const QUESTIONS = [
    correct:0,
    explanation:"RAG is most efficient for large, query-specific reference material. The full 500-page manual might be 300K+ tokens — exceeding even the 200K context window and costing ~$3 per query at standard rates. RAG retrieves 2-5 relevant pages per query: ~3-5K tokens, matching the query to exactly what's needed at a fraction of the cost."},
 ];
+
+// Build lookup maps
+const QUESTIONS_BY_DOMAIN = {};
+Object.keys(DOMAINS).forEach(d => { QUESTIONS_BY_DOMAIN[d] = []; });
+QUESTIONS.forEach(q => QUESTIONS_BY_DOMAIN[q.domain].push(q));
+
+// Generate a mock exam (60 questions, proportional to domain weights)
+function buildMockExam() {
+  const exam = [];
+  const targets = { agentic: 16, tools_mcp: 11, claude_code: 12, prompt_eng: 12, context: 9 };
+  Object.keys(targets).forEach(domain => {
+    const pool = [...QUESTIONS_BY_DOMAIN[domain]].sort(() => Math.random() - 0.5);
+    exam.push(...pool.slice(0, targets[domain]));
+  });
+  return exam.sort(() => Math.random() - 0.5);
+}
+
+// Generate a diagnostic test (25 questions, 5 per domain)
+function buildDiagnostic() {
+  const test = [];
+  Object.keys(DOMAINS).forEach(domain => {
+    const pool = [...QUESTIONS_BY_DOMAIN[domain]].sort(() => Math.random() - 0.5);
+    test.push(...pool.slice(0, 5));
+  });
+  return test.sort(() => Math.random() - 0.5);
+}
+
+// Spaced repetition state helpers (localStorage)
+const SR_KEY = 'ccaf_sr_state';
+function getSRState() {
+  try { return JSON.parse(localStorage.getItem(SR_KEY)) || {}; } catch { return {}; }
+}
+function saveSRState(state) {
+  try { localStorage.setItem(SR_KEY, JSON.stringify(state)); } catch {}
+}
+function updateSR(questionId, rating) {
+  // rating: 'easy' | 'ok' | 'hard'
+  const state = getSRState();
+  const now = Date.now();
+  const entry = state[questionId] || { interval: 1, ease: 2.5, due: now, reps: 0 };
+  const intervals = { easy: entry.interval * entry.ease * 1.3, ok: entry.interval * entry.ease, hard: 1 };
+  const newInterval = Math.max(1, intervals[rating]);
+  const newEase = Math.max(1.3, entry.ease + (rating === 'easy' ? 0.1 : rating === 'hard' ? -0.2 : 0));
+  state[questionId] = { interval: newInterval, ease: newEase, due: now + newInterval * 60000, reps: entry.reps + 1 };
+  saveSRState(state);
+}
+function getDueQuestions(domain) {
+  const state = getSRState();
+  const now = Date.now();
+  let pool = domain === 'all' ? QUESTIONS : (QUESTIONS_BY_DOMAIN[domain] || QUESTIONS);
+  const due = pool.filter(q => !state[q.id] || state[q.id].due <= now);
+  const notDue = pool.filter(q => state[q.id] && state[q.id].due > now);
+  return due.length > 0 ? due.sort(() => Math.random() - 0.5) : notDue.sort((a,b) => state[a.id].due - state[b.id].due);
+}
+
+// Progress tracking
+const PROGRESS_KEY = 'ccaf_progress';
+function getProgress() {
+  try { return JSON.parse(localStorage.getItem(PROGRESS_KEY)) || {}; } catch { return {}; }
+}
+function saveScore(type, score, total, domainScores) {
+  try {
+    const p = getProgress();
+    if (!p[type]) p[type] = [];
+    p[type].push({ date: new Date().toISOString(), score, total, pct: Math.round(score/total*100), domainScores });
+    p[type] = p[type].slice(-10); // keep last 10
+    localStorage.setItem(PROGRESS_KEY, JSON.stringify(p));
+  } catch {}
+}
