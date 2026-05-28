@@ -190,7 +190,7 @@ const QUESTIONS = [
    explanation:"The stop_reason field in the Anthropic API response indicates why Claude stopped: 'end_turn' (natural completion), 'tool_use' (waiting for tool result), 'max_tokens' (hit token limit), or 'stop_sequence' (hit a stop sequence)."},
 
   {id:31,domain:'agentic',difficulty:'hard',
-   question:"What is the 'galactic-brain' failure mode in agentic Claude?",
+   question:"What is the 'galaxy-brained' failure mode in agentic Claude?",
    options:["Claude generating an extremely long chain of tool calls that exhausts available resources by pursuing an overly broad interpretation of the original task","Claude convincing itself through a sequence of plausible-looking reasoning steps that an unsafe or harmful action is actually justified","Claude misidentifying the correct tool to invoke due to ambiguous function descriptions, causing cascading errors across subsequent steps of the agentic loop","Claude producing verbose, repetitive reasoning traces that consume the entire context window without making meaningful forward progress on the assigned task"],
    correct:1,
    explanation:"The 'galaxy-brained' failure mode is when Claude's reasoning leads it through a series of seemingly logical steps to a conclusion that would strike most humans as obviously wrong or harmful. A persuasive argument for crossing a bright line should actually increase Claude's suspicion something is wrong, not justify compliance."},
@@ -234,10 +234,10 @@ const QUESTIONS = [
    explanation:"MCP has three roles: Host (the application like Claude Code or Claude Desktop that contains an MCP client), Client (maintains a 1:1 connection with an MCP server), and Server (a lightweight process exposing tools, resources, and/or prompts via the MCP protocol)."},
 
   {id:38,domain:'tools_mcp',difficulty:'medium',
-   question:"What are the two primary transport mechanisms supported by MCP?",
-   options:["WebSocket and REST over HTTPS, providing bidirectional communication and stateless request handling for modern tool integrations","gRPC with Protocol Buffers and HTTP/2 streaming, offering lower latency and stronger type safety than text-based transport options","TCP sockets and Unix domain sockets, supporting both remote network connections and local inter-process MCP server communication","stdio (standard input/output) and HTTP with SSE (Server-Sent Events)"],
+   question:"Which correctly describes the transport layer options in the MCP specification?",
+   options:["WebSocket and REST over HTTPS — bidirectional streaming plus stateless request/response — are MCP's two official transport layers for remote server connections","gRPC with Protocol Buffers is the primary MCP transport for type-safe local tool servers, with HTTP/2 streaming as the remote transport option","TCP sockets (local) and WebSocket (remote) are MCP's two transports, with stdio available only as a legacy option for backward compatibility","stdio (standard input/output) for local servers, HTTP+SSE for legacy remote servers, and Streamable HTTP as the modern remote transport"],
    correct:3,
-   explanation:"MCP supports stdio transport (for local processes — the host spawns the server and communicates via stdin/stdout) and HTTP+SSE transport (for remote servers — the client connects via HTTP and receives events via Server-Sent Events). Stdio is common for local tools; SSE for remote/cloud servers."},
+   explanation:"MCP supports three transports: stdio (host spawns the server, communicates via stdin/stdout — most common for local tools), HTTP+SSE (legacy remote transport using Server-Sent Events), and Streamable HTTP (the modern remote transport added in the 2024-11-05 spec revision, replacing SSE for new implementations). stdio remains the default for Claude Code MCP servers."},
 
   {id:39,domain:'tools_mcp',difficulty:'easy',
    question:"What are the three primitive types that MCP servers can expose?",
@@ -434,10 +434,10 @@ const QUESTIONS = [
    explanation:"PreToolUse hooks run before each tool execution. If the hook exits with code 2, the tool call is blocked and Claude sees a rejection message. Exit code 0 allows the tool to proceed. This enables custom permission checks, audit logging, confirmation prompts, or input validation before tools run."},
 
   {id:71,domain:'claude_code',difficulty:'medium',
-   question:"What environment variables are available to Claude Code hooks?",
-   options:["ANTHROPIC_API_KEY, CLAUDE_SESSION_ID, and CLAUDE_MODEL_ID, plus any custom variables defined in the project's settings.json hooks configuration","CLAUDE_HOOK_EVENT, CLAUDE_SESSION_TOKEN (JSON), and CLAUDE_RESPONSE_TEXT (for Stop hooks), plus environment variables explicitly passed in the hook configuration block","CLAUDE_TOOL_NAME, CLAUDE_TOOL_INPUT (JSON), CLAUDE_TOOL_RESULT (JSON, for PostToolUse), and standard system environment variables","Only variables inherited from the parent shell environment — Claude Code does not inject any hook-specific variables beyond what the system already provides"],
-   correct:2,
-   explanation:"Claude Code sets environment variables for hooks: CLAUDE_TOOL_NAME (the tool being called), CLAUDE_TOOL_INPUT (JSON string of the tool's input parameters), and for PostToolUse hooks, CLAUDE_TOOL_RESULT (JSON of the result). These allow hooks to inspect and respond to specific tool calls."},
+   question:"In Claude Code, how does a hook script receive data about the tool being invoked?",
+   options:["Via environment variables — Claude Code sets CLAUDE_TOOL_NAME, CLAUDE_TOOL_INPUT, and CLAUDE_TOOL_RESULT before executing the hook script","Via stdin as a JSON object — Claude Code pipes a payload containing tool_name, tool_input, hook_event_name, and session metadata to the hook's stdin","Via command-line arguments — the tool name is passed as $1 and the JSON-encoded input as $2 when Claude Code executes the hook script","Via a temporary JSON file — Claude Code writes the event payload to a known temp path and sets CLAUDE_HOOK_FILE to the file path for the hook to read"],
+   correct:1,
+   explanation:"Claude Code delivers hook data via stdin as JSON — not environment variables. The payload includes hook_event_name, tool_name, tool_input (the tool's arguments), session_id, cwd, and transcript_path. A typical hook reads it with: INPUT=$(cat); TOOL=$(echo \"$INPUT\" | jq -r '.tool_name'). There are no CLAUDE_TOOL_NAME or CLAUDE_TOOL_INPUT environment variables."},
 
   {id:72,domain:'claude_code',difficulty:'easy',
    question:"What is the /memory command in Claude Code used for?",
@@ -489,9 +489,9 @@ const QUESTIONS = [
 
   {id:80,domain:'claude_code',difficulty:'medium',
    question:"How do you resume a previous Claude Code conversation using the CLI?",
-   options:["claude --continue (to continue the most recent session) or claude --continue <session-id> (to continue a specific prior session by its ID)","claude session list to find available session IDs, then claude session resume <session-id> to reload a specific previous session","claude --resume (to resume the most recent session) or claude --resume <session-id> (to resume a specific session by ID)","Set resume: true in settings.json to automatically reload the last session, or pass the session ID via the CLAUDE_SESSION_ID environment variable"],
-   correct:2,
-   explanation:"claude --resume resumes the most recent conversation; claude --resume <session-id> resumes a specific session. Claude Code saves conversation history locally, allowing you to continue working across multiple terminal sessions or CLI invocations."},
+   options:["claude -c or --continue (resumes the most recent session in the current directory); claude -r or --resume [session-id] (opens a picker or resumes a specific session by ID)","claude session list to find available session IDs, then claude session resume <session-id> to reload the desired previous conversation","claude --restart (most recent session) or claude --replay <session-id> (specific session by ID, with full message replay from the conversation log)","Set resume: true in settings.json to automatically reload the last session, or pass the session ID via the CLAUDE_SESSION_ID environment variable"],
+   correct:0,
+   explanation:"--continue / -c continues the most recent conversation in the current directory. --resume / -r opens an interactive picker to select a session by name/ID, or accepts an optional session ID or search term directly. These are distinct flags: --continue always picks the most recent; --resume lets you choose any prior session."},
 
   {id:81,domain:'claude_code',difficulty:'hard',
    question:"What is the correct format for a permissions 'allow' rule that permits Claude Code to run any git command in Bash?",
@@ -554,10 +554,10 @@ const QUESTIONS = [
    explanation:"PreToolUse: runs before the tool, can block or allow the call. PostToolUse: runs after the tool completes, receives the result, useful for: auto-formatting files after Write/Edit tool calls, running tests after code changes, logging all tool outputs, or triggering downstream actions based on what happened."},
 
   {id:91,domain:'claude_code',difficulty:'medium',
-   question:"What does the CLAUDE_TOOL_INPUT environment variable contain in a PreToolUse hook?",
-   options:["A JSON string of the tool's input parameters — e.g., for a Bash tool call, it would contain the command being executed","A JSON string of the previous tool call's output — e.g., for a Bash tool call, it would contain the stdout result from the last executed command","A JSON string containing session context metadata — e.g., conversation ID, user identity, and the full list of tools currently available in the session","A JSON string of the tool's schema definition — e.g., for a Bash tool call, it would describe the accepted input parameters and their expected types"],
+   question:"In a Claude Code PreToolUse hook, what does the tool_input field in the stdin JSON payload contain?",
+   options:["A JSON object of the tool's input parameters — e.g., for a Bash call it contains {\"command\": \"git push\"}, letting the hook inspect what Claude is about to execute","A JSON string of the previous tool call's output — e.g., for a Bash call it contains the stdout from the last completed command in the conversation","A JSON object of session metadata — e.g., conversation ID, permission mode, and the full list of tools available to the current Claude Code session","A JSON object of the tool's schema definition — e.g., for a Bash call it describes the accepted input parameters, their types, and any validation constraints"],
    correct:0,
-   explanation:"CLAUDE_TOOL_INPUT is a JSON-encoded string of the tool's input arguments. For a Bash tool call with command 'git push', CLAUDE_TOOL_INPUT would be '{\"command\":\"git push\"}'. This allows hooks to inspect exactly what Claude is about to do and make decisions based on the specific arguments."},
+   explanation:"In the stdin JSON payload, tool_input is an object containing the tool's arguments. For Bash: {\"command\": \"git push\"}. For Write: {\"file_path\": \"/etc/hosts\", \"content\": \"...\"}. The hook reads this via: INPUT=$(cat); TOOL_INPUT=$(echo \"$INPUT\" | jq '.tool_input'). This lets hooks inspect — and optionally block — exactly what Claude is about to do."},
 
   {id:92,domain:'claude_code',difficulty:'easy',
    question:"What is the /config command in Claude Code used for?",
@@ -585,9 +585,9 @@ const QUESTIONS = [
 
   {id:96,domain:'claude_code',difficulty:'hard',
    question:"What format does a Claude Code hook definition use in settings.json?",
-   options:["A JSON object with a 'handlers' key pointing to named functions exported from a Node.js script — each function receives the event payload and can return a modified result","A flat array of shell command strings placed directly under each hook event key — hooks run in sequence and apply globally to all tool invocations without filtering by tool name","An object with 'hooks' array where each entry has 'type' (PreToolUse/PostToolUse/Stop/Notification), optional 'tools' filter array, and 'command' (shell command to execute)","A JSON object with 'event' (PreToolUse/PostToolUse), 'matcher' regex to filter tool names, and 'handler' pointing to an executable script file path on the local filesystem"],
+   options:["A JSON object with a 'handlers' key pointing to named functions exported from a Node.js script — each function receives the event payload and can return a modified result","A flat array under the 'hooks' key where each entry has 'type' (PreToolUse/PostToolUse/Stop), an optional 'tools' filter array, and a 'command' string to execute","A nested object under 'hooks' keyed by event type (e.g. PreToolUse), where each value is an array of {matcher, hooks:[{type,command}]} entries — event types are top-level keys, not values","A flat array of shell command strings placed directly under each hook event key — hooks run in sequence and apply globally to all tool invocations without filtering"],
    correct:2,
-   explanation:"In settings.json, hooks are defined under the 'hooks' key as an array of objects: { type: 'PreToolUse', tools: ['Bash', 'Write'], command: './scripts/audit-tool.sh' }. The 'tools' filter is optional — omitting it runs the hook for all tools of that lifecycle type. 'command' is the shell command executed."},
+   explanation:"The correct settings.json hooks structure is: {\"hooks\": {\"PreToolUse\": [{\"matcher\": \"Bash\", \"hooks\": [{\"type\": \"command\", \"command\": \"./audit.sh\"}]}]}}. Event types (PreToolUse, PostToolUse, Stop, Notification) are top-level keys under 'hooks'. Each entry has a 'matcher' regex to filter tools and a nested 'hooks' array with {type, command} objects. There is no flat array with a 'type' field."},
 
   {id:97,domain:'claude_code',difficulty:'easy',
    question:"What does the /init command do in Claude Code?",
@@ -849,7 +849,7 @@ const QUESTIONS = [
    question:"What is the minimum number of tokens required for a prompt section to be eligible for caching with Claude 3.5 Sonnet?",
    options:["512 tokens — sections below this threshold are too small to qualify for caching","2,048 tokens — sections shorter than 2,048 tokens cannot be cached with the API","256 tokens — the minimum enforced for cache_control-marked content in Claude 3.5 Sonnet","1,024 tokens — sections shorter than 1024 tokens cannot be cached"],
    correct:3,
-   explanation:"The minimum cacheable token length for Claude 3.5 Sonnet (and most Claude 3.x models) is 1,024 tokens. For Claude 3 Haiku, it's also 1,024 tokens. Attempting to cache shorter sections has no effect — they won't be cached. Structure your prompts to ensure cacheable sections exceed this threshold."},
+   explanation:"The minimum cacheable token length for Claude 3.5 Sonnet is 1,024 tokens. For Claude 3 Haiku, it's 2,048 tokens. Attempting to cache shorter sections has no effect — they won't be cached. Structure your prompts to ensure cacheable sections exceed the model-specific threshold."},
 
   {id:140,domain:'context',difficulty:'medium',
    question:"How long does a prompt cache entry remain valid (TTL) in the Anthropic API?",
