@@ -143,6 +143,8 @@
 
 <script src="js/questions.js"></script>
 <script>
+function escapeHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
 let test = [], current = 0, score = 0, answered = false;
 let domainCorrect = {}, domainTotal = {};
 
@@ -184,7 +186,7 @@ function showQuestion() {
     opts.innerHTML += `
       <button class="quiz-option" onclick="selectOption(${i})" id="opt-${i}">
         <span class="quiz-option-letter">${ltr}</span>
-        <span class="quiz-option-text">${q.options[i]}</span>
+        <span class="quiz-option-text">${escapeHtml(q.options[i])}</span>
       </button>`;
   });
 }
@@ -202,7 +204,7 @@ function selectOption(idx) {
   if (idx === q.correct) { score++; domainCorrect[q.domain]++; }
 
   const exp = document.getElementById('explanation');
-  exp.innerHTML = `<strong>${idx === q.correct ? '✅ Correct!' : '❌ Incorrect.'}</strong> ${q.explanation}`;
+  exp.innerHTML = `<strong>${idx === q.correct ? '✅ Correct!' : '❌ Incorrect.'}</strong> ${escapeHtml(q.explanation)}`;
   exp.classList.add('visible');
   document.getElementById('score-live').textContent = `${score}/${current + 1} correct`;
 

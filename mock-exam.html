@@ -166,6 +166,8 @@
 
 <script src="js/questions.js"></script>
 <script>
+function escapeHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
 let exam = [], current = 0, score = 0, answered = false;
 let domainCorrect = {}, domainTotal = {};
 let missedQs = [];
@@ -244,7 +246,7 @@ function showQuestion() {
     opts.innerHTML += `
       <button class="quiz-option" onclick="selectOption(${i})" id="opt-${i}">
         <span class="quiz-option-letter">${ltr}</span>
-        <span class="quiz-option-text">${q.options[i]}</span>
+        <span class="quiz-option-text">${escapeHtml(q.options[i])}</span>
       </button>`;
   });
 }
@@ -271,7 +273,7 @@ function selectOption(idx) {
   const exp = document.getElementById('explanation');
   const icon = idx === q.correct ? '✅' : '❌';
   const label = idx === q.correct ? 'Correct!' : 'Incorrect.';
-  exp.innerHTML = `<strong>${icon} ${label}</strong> ${q.explanation}`;
+  exp.innerHTML = `<strong>${icon} ${label}</strong> ${escapeHtml(q.explanation)}`;
   exp.classList.add('visible');
 
   document.getElementById('score-live').textContent = `Score: ${score}/${current + 1}`;
@@ -344,12 +346,12 @@ function finishExam() {
           </div>
           <div style="font-size:0.92rem;font-weight:600;margin-bottom:12px;color:var(--text);line-height:1.5">${q.question}</div>
           <div style="font-size:0.84rem;color:var(--red);margin-bottom:5px;display:flex;align-items:flex-start;gap:6px">
-            <span>❌</span><span>Your answer: ${chosen}</span>
+            <span>❌</span><span>Your answer: ${escapeHtml(chosen)}</span>
           </div>
           <div style="font-size:0.84rem;color:var(--green);margin-bottom:12px;display:flex;align-items:flex-start;gap:6px">
-            <span>✅</span><span>Correct: ${q.options[q.correct]}</span>
+            <span>✅</span><span>Correct: ${escapeHtml(q.options[q.correct])}</span>
           </div>
-          <div style="font-size:0.84rem;color:var(--text2);line-height:1.7;padding:12px 14px;background:var(--surface2);border-radius:var(--radius-sm);border-left:3px solid var(--accent)">${q.explanation}</div>
+          <div style="font-size:0.84rem;color:var(--text2);line-height:1.7;padding:12px 14px;background:var(--surface2);border-radius:var(--radius-sm);border-left:3px solid var(--accent)">${escapeHtml(q.explanation)}</div>
         </div>`;
     });
   }
